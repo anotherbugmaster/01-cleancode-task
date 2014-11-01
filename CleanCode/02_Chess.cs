@@ -2,27 +2,31 @@
 {
 	public class Chess
 	{
-		private readonly Board b;
+	    private enum playerState
+	    {
+	        check,
+            mate,
+            ok,
+            stalemate
+	    }
+		private readonly Board board;
 
-		public Chess(Board b)
+		public Chess(Board board)
 		{
-		this.b = b;
+		    this.board = board;
 		}
 
 		public string getWhiteStatus() {
-			bool bad=checkForWhite();
-			bool ok=  false;
-			foreach (Loc loc1 in b.Figures(Cell.White))
+			bool bad = checkForWhite();
+			bool ok = false;
+			foreach (Location loc1 in board.GetFiguresLocation(Cell.White))
 			{
-				foreach (Loc loc2 in b.Get(loc1).Figure.Moves(loc1, b)){
-				Cell old_dest = b.PerformMove(loc1, loc2);
+				foreach (Location loc2 in board.Get(loc1).Figure.PossibleTurns(loc1, board)){
+				Cell old_dest = board.PerformMove(loc1, loc2);
 				if (!checkForWhite( ))
 					ok = true;
-				b.PerformUndoMove(loc1, loc2, old_dest);
+				board.PerformUndoMove(loc1, loc2, old_dest);
 				}
-				
-				
-				
 			}
 			if (bad)
 				if (ok)
@@ -35,18 +39,17 @@
 		private bool checkForWhite()
 		{
 			bool bFlag = false;
-			foreach (Loc loc in b.Figures(Cell.Black))
+			foreach (Location location in board.GetFiguresLocation(Cell.Black))
 			{
-				var cell = b.Get(loc);
-				var moves = cell.Figure.Moves(loc, b);
-				foreach (Loc to in moves)
+				var cell = board.Get(location);
+				var possibleTurns = cell.Figure.PossibleTurns(location, board);
+				foreach (Location to in possibleTurns)
 				{
-					if (b.Get(to).IsWhiteKing)
+					if (board.Get(to).IsWhiteKing)
 						bFlag = true;
 				}
 			}
-			if (bFlag) return true;
-			return false;
+		    return bFlag;
 		}
 	}
 }

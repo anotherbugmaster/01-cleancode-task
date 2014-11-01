@@ -6,14 +6,14 @@ namespace CleanCode
 {
 	public class Figure
 	{
-		public static readonly Figure Rook = new Figure(true, 'R', new Loc(1, 0), new Loc(0, 1));
-		public static readonly Figure King = new Figure(false, 'K', new Loc(1, 1), new Loc(1, 0), new Loc(0, 1));
-		public static readonly Figure Queen = new Figure(true, 'Q', new Loc(1, 1), new Loc(1, 0), new Loc(0, 1));
-		public static readonly Figure Bishop = new Figure(true, 'B', new Loc(1, 1));
-		public static readonly Figure Knight = new Figure(false, 'N', new Loc(2, 1), new Loc(1, 2));
+		public static readonly Figure Rook = new Figure(true, 'R', new Location(1, 0), new Location(0, 1));
+		public static readonly Figure King = new Figure(false, 'K', new Location(1, 1), new Location(1, 0), new Location(0, 1));
+		public static readonly Figure Queen = new Figure(true, 'Q', new Location(1, 1), new Location(1, 0), new Location(0, 1));
+		public static readonly Figure Bishop = new Figure(true, 'B', new Location(1, 1));
+		public static readonly Figure Knight = new Figure(false, 'N', new Location(2, 1), new Location(1, 2));
 		private static readonly Figure[] map = new Figure[128];
 
-		private readonly Loc[] ds;
+		private readonly Location[] ds;
 		private readonly bool infinit;
 
 		static Figure()
@@ -23,13 +23,13 @@ namespace CleanCode
 			map['.'] = null;
 		}
 
-		public Figure(bool infinit, char sign, params Loc[] ds)
+		public Figure(bool infinit, char sign, params Location[] ds)
 		{
 			this.infinit = infinit;
 			this.ds = ds
-				.Union(ds.Select(dd => new Loc(-dd.X, dd.Y)))
-				.Union(ds.Select(dd => new Loc(dd.X, -dd.Y)))
-				.Union(ds.Select(dd => new Loc(-dd.X, -dd.Y)))
+				.Union(ds.Select(dd => new Location(-dd.X, dd.Y)))
+				.Union(ds.Select(dd => new Location(dd.X, -dd.Y)))
+				.Union(ds.Select(dd => new Location(-dd.X, -dd.Y)))
 				.ToArray();
 			Sign = sign;
 		}
@@ -41,17 +41,17 @@ namespace CleanCode
 			return map[Char.ToUpper(c)];
 		}
 
-		public IEnumerable<Loc> Moves(Loc loc, Board board)
+		public IEnumerable<Location> Moves(Location location, Board board)
 		{
-			return ds.SelectMany(d => MovesInOneDirection(loc, board, d, infinit));
+			return ds.SelectMany(d => MovesInOneDirection(location, board, d, infinit));
 		}
 		
-		private static IEnumerable<Loc> MovesInOneDirection(Loc from, Board board, Loc dir, bool infinit)
+		private static IEnumerable<Location> MovesInOneDirection(Location from, Board board, Location dir, bool infinit)
 		{
 			Cell fromCell = board.Get(from);
 			for (int i = 1; i < (infinit ? 8 : 2); i++)
 			{
-				var to = new Loc(from.X + dir.X*i, from.Y + dir.Y*i);
+				var to = new Location(from.X + dir.X*i, from.Y + dir.Y*i);
 				if (!to.InBoard) break;
 				Cell toCell = board.Get(to);
 				if (toCell.Figure == null) yield return to;
