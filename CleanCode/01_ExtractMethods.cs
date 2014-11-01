@@ -5,26 +5,26 @@ namespace CleanCode
 {
 	public static class RefactorMethod
 	{
-		private static void SaveData(string s, byte[] d)
+		private static void SaveData(string fileName, byte[] data)
 		{
 			//open files
-			var fs1 = new FileStream(s, FileMode.OpenOrCreate);
-			var fs2 = new FileStream(Path.ChangeExtension(s, "bkp"), FileMode.OpenOrCreate);
+			var fileStream = new FileStream(fileName, FileMode.OpenOrCreate);
+			var backupStream = new FileStream(Path.ChangeExtension(fileName, "bkp"), FileMode.OpenOrCreate);
 
 			// write data
-			fs1.Write(d, 0, d.Length);
-			fs2.Write(d, 0, d.Length);
+			fileStream.Write(data, 0, data.Length);
+			backupStream.Write(data, 0, data.Length);
 
 			// close files
-			fs1.Close();
-			fs2.Close();
+			fileStream.Close();
+			backupStream.Close();
 
 			// save last-write time
-			string tf = s + ".time";
-			var fs3 = new FileStream(tf, FileMode.OpenOrCreate);
+			string tf = fileName + ".time";
+			var dateFileStream = new FileStream(tf, FileMode.OpenOrCreate);
 			var t = BitConverter.GetBytes(DateTime.Now.Ticks);
-			fs3.Write(t, 0, t.Length);
-			fs3.Close();
+			dateFileStream.Write(t, 0, t.Length);
+			dateFileStream.Close();
 		}
 	}
 }
